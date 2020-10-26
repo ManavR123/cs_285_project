@@ -1,11 +1,21 @@
+import sys
+
 import gym
 from gym import spaces
 
-from utils import sample_const_delay, sample_delay
+from deeptutor.envs.DashEnv import *
+from deeptutor.envs.utils import *
+
 
 class StudentEnv(gym.Env):
-  
-    def __init__(self, n_items=10, n_steps=100, discount=1., sample_delay=None, reward_func='likelihood'):
+    def __init__(
+        self,
+        n_items=10,
+        n_steps=100,
+        discount=1.0,
+        sample_delay=None,
+        reward_func="likelihood",
+    ):
         if sample_delay is None:
             self.sample_delay = sample_const_delay(1)
         else:
@@ -19,27 +29,31 @@ class StudentEnv(gym.Env):
         self.curr_delay = None
         self.discount = discount
         self.reward_func = reward_func
-    
+
         self.action_space = spaces.Discrete(n_items)
-        self.observation_space = spaces.Box(np.zeros(4), np.array([n_items-1, 1, sys.maxsize, sys.maxsize]))
-    
+        self.observation_space = spaces.Box(
+            np.zeros(4), np.array([n_items - 1, 1, sys.maxsize, sys.maxsize])
+        )
+
     def _recall_likelihoods(self):
         raise NotImplementedError
-    
+
     def _recall_log_likelihoods(self, eps=1e-9):
         return np.log(eps + self._recall_likelihoods())
-  
+
     def _update_model(self, item, outcome, timestamp, delay):
         raise NotImplementedError
 
     def _obs(self):
         timestamp = self.now - self.curr_delay
-        return np.array([self.curr_item, self.curr_outcome, timestamp, self.curr_delay], dtype=int)
+        return np.array(
+            [self.curr_item, self.curr_outcome, timestamp, self.curr_delay], dtype=int
+        )
 
     def _rew(self):
-        if self.reward_func == 'likelihood':
+        if self.reward_func == "likelihood":
             return self._recall_likelihoods().mean()
-        elif self.reward_func == 'log_likelihood':
+        elif self.reward_func == "log_likelihood":
             return self._recall_log_likelihoods().mean()
         else:
             raise ValueError
@@ -52,7 +66,9 @@ class StudentEnv(gym.Env):
             raise ValueError
 
         self.curr_item = action
-        self.curr_outcome = 1 if np.random.random() < self._recall_likelihoods()[action] else 0
+        self.curr_outcome = (
+            1 if np.random.random() < self._recall_likelihoods()[action] else 0
+        )
 
         self.curr_step += 1
         self.curr_delay = self.sample_delay()
