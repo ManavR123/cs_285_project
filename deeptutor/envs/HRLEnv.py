@@ -1,6 +1,7 @@
 import numpy as np
-from StudentEnv import StudentEnv
-from utils import sample_loglinear_coeffs
+
+from deeptutor.envs.StudentEnv import StudentEnv
+from deeptutor.infrastructure.utils import sample_item_decay_rates
 
 
 class HLREnv(StudentEnv):

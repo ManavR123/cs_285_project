@@ -1,6 +1,9 @@
 import copy
+import sys
+import types
 
 import numpy as np
+from gym import spaces
 
 item_difficulty_mean = 1
 item_difficulty_std = 1

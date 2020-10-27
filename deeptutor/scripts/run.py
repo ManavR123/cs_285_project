@@ -10,17 +10,25 @@ from queue import Queue
 
 import gym
 import numpy as np
+import tensorflow as tf
 from garage.envs import GymEnv
 from garage.np.baselines import LinearFeatureBaseline
 from garage.tf.algos import TRPO
-from garage.tf.policies import CategoricalGRUPolicy
 from gym import spaces
 
+from deeptutor.envs.DashEnv import *
 from deeptutor.envs.EFCEnv import EFCEnv
+from deeptutor.envs.HRLEnv import *
 from deeptutor.infrastructure.utils import *
+from deeptutor.tutors.LeitnerTutor import LeitnerTutor
+from deeptutor.tutors.RandTutor import RandTutor
+from deeptutor.tutors.RLTutor import RLTutor
+from deeptutor.tutors.SuperMnemoTutor import SuperMnemoTutor
+from deeptutor.tutors.ThresholdTutor import ThresholdTutor
 
 
 def main():
+    tf.compat.v1.disable_eager_execution()
 
     data_dir = os.path.join(".", "data")
 
@@ -69,7 +77,6 @@ def main():
                             agent = build_tutor(n_items, env=env)
                         else:
                             agent = build_tutor(n_items)
-                        print(env_name)
                         R[k, i, :, j] = agent.train(env, n_eps=n_eps)
                     print(env_name, j, tutor_name, np.mean(R[k, i, :, j]))
                 print()

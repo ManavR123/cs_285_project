@@ -1,3 +1,6 @@
+from deeptutor.infrastructure.utils import *
+
+
 class Tutor(object):
     def __init__(self):
         pass

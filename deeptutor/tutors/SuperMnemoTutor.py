@@ -1,8 +1,12 @@
 #
 # based on SM2_mnemosyne.py <Peter.Bienstman@UGent.be>
 #
+import random
 
-from Tutor import Tutor
+import numpy as np
+
+from deeptutor.tutors.Card import Card
+from deeptutor.tutors.Tutor import Tutor
 
 HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.

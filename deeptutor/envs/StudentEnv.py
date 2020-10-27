@@ -1,10 +1,10 @@
 import sys
 
 import gym
+import numpy as np
 from gym import spaces
 
-from deeptutor.envs.DashEnv import *
-from deeptutor.envs.utils import *
+from deeptutor.infrastructure.utils import sample_const_delay
 
 
 class StudentEnv(gym.Env):

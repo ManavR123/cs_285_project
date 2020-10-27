@@ -1,3 +1,11 @@
+from queue import Queue
+
+import numpy as np
+
+from deeptutor.infrastructure.utils import *
+from deeptutor.tutors.Tutor import Tutor
+
+
 class LeitnerTutor(Tutor):
     """sample item from an infinite leitner queue network"""
 
@@ -60,7 +68,7 @@ class LeitnerTutor(Tutor):
         self.curr_q = 0
         self.just_reset = True
 
-    def train(self, gym_env, n_eps=10):
+    def train(self, env, n_eps=10):
         arrival_probs = np.arange(0, 1, 0.01)
         n_eps_per_aprob = n_eps // arrival_probs.size
         assert n_eps_per_aprob > 0

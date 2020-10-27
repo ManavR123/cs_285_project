@@ -1,5 +1,6 @@
 import numpy as np
-from Tutor import Tutor
+
+from deeptutor.tutors.Tutor import Tutor
 
 
 class RandTutor(Tutor):

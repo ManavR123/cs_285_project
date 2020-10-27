@@ -1,3 +1,10 @@
+import numpy as np
+from garage.tf.policies import CategoricalGRUPolicy
+
+from deeptutor.envs.MyGymEnv import MyGymEnv
+from deeptutor.tutors.Tutor import Tutor
+
+
 class RLTutor(Tutor):
     def __init__(self, n_items, init_timestamp=0):
         self.raw_policy = None

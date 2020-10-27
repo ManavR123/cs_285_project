@@ -1,5 +1,9 @@
+import copy
+
 import numpy as np
-from Tutor import Tutor
+
+from deeptutor.infrastructure.utils import *
+from deeptutor.tutors.Tutor import Tutor
 
 
 class ThresholdTutor(Tutor):

@@ -1,5 +1,6 @@
 import numpy as np
 
+from deeptutor.envs.StudentEnv import StudentEnv
 from deeptutor.infrastructure.utils import (
     sample_delay_coef,
     sample_item_decay_exps,
@@ -7,8 +8,6 @@ from deeptutor.infrastructure.utils import (
     sample_student_ability,
     sample_student_decay_exp,
 )
-
-from deeptutor.envs.StudentEnv import StudentEnv
 
 
 class DASHEnv(StudentEnv):
