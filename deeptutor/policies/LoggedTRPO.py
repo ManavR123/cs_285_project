@@ -1,3 +1,8 @@
+from garage.tf.algos.trpo import TRPO
+
+from deeptutor.tutors.DummyTutor import DummyTutor
+from deeptutor.infrastructure.utils import run_ep
+
 class LoggedTRPO(TRPO):
     def __init__(self, *args, **kwargs):
         super(LoggedTRPO, self).__init__(*args, **kwargs)

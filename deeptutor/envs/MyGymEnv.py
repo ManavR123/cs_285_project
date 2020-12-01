@@ -15,10 +15,12 @@ class MyGymEnv(GymEnv):
         log_dir=None,
         record_log=False,
         force_reset=False,
+        max_episode_length=None
     ):
         super().__init__(env)
         self.env = env
         self.env_id = ""
+        self.max_episode_length = max_episode_length
 
         if log_dir is None or record_log is False:
             self.monitoring = False
