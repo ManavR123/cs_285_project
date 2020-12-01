@@ -15,6 +15,7 @@ from garage.envs import GymEnv
 from garage.np.baselines import LinearFeatureBaseline
 from garage.tf.algos import TRPO
 from gym import spaces
+from matplotlib import pyplot as plt
 
 from deeptutor.envs.DashEnv import *
 from deeptutor.envs.EFCEnv import EFCEnv
@@ -30,7 +31,7 @@ from deeptutor.tutors.ThresholdTutor import ThresholdTutor
 def main():
     tf.compat.v1.disable_eager_execution()
 
-    data_dir = os.path.join(".", "data")
+    data_dir = os.path.join(os.getcwd(), "data")
 
     n_steps = 200
     n_items = 30
@@ -55,7 +56,7 @@ def main():
         ("Leitner", LeitnerTutor),
         ("SuperMnemo", SuperMnemoTutor),
         ("Threshold", ThresholdTutor),
-        ("RL", RLTutor),
+        # ("RL", RLTutor),
     ]
 
     R = np.zeros((len(envs) * len(reward_funcs), len(tutor_builders), n_eps, n_reps))
@@ -93,15 +94,8 @@ def main():
         "reward_funcs": reward_funcs,
         "rewards": R,
     }
-    with open(os.path.join(d, "reward_logs.pkl"), "wb") as f:
+    with open(os.path.join(data_dir, "reward_logs.pkl"), "wb") as f:
         pickle.dump(reward_logs, f, pickle.HIGHEST_PROTOCOL)
-
-    R = np.zeros((6, len(tutor_builders), n_eps, n_reps))
-    for i in range(6):
-        with open(os.path.join(data_dir, "reward_logs.pkl.%d" % i), "rb") as f:
-            reward_logs = pickle.load(f)
-            R[i] = reward_logs["rewards"]
-            print(reward_logs["env_names"], reward_logs["reward_funcs"])
 
     for i in range(R.shape[0]):
         for j in range(R.shape[3]):
@@ -127,6 +121,62 @@ def main():
                     np.nanmean(R[k, i, :, :]),
                     np.nanstd(R[k, i, :, :]),
                 )
+
+    title_of_env_name = {
+        "EFC": "Exponential Forgetting Curve",
+        "HLR": "Half-Life Regression",
+        "DASH": "Generalized Power-Law",
+    }
+
+    for h, (env_name, _) in enumerate(envs):
+        for m, reward_func in enumerate(reward_funcs):
+            k = h * len(reward_funcs) + m
+
+            plt.xlabel("Iteration")
+            plt.ylabel(
+                "Percent better than Random\n(Reward: %s)"
+                % reward_func.replace("_", "-")
+                .replace("likelihood", "Likelihood")
+                .replace("log", "Log")
+            )
+            plt.title("Student Model: %s" % title_of_env_name[env_name])
+
+            colors = ["gray", "teal", "teal", "teal", "orange"]
+            styles = ["dotted", "dashed", "dashdot", "solid", "solid"]
+            for i, (tutor_name, _) in enumerate(tutor_builders):
+                if tutor_name == "RL":
+                    tutor_name = "TRPO"
+                if tutor_name == "TRPO":
+                    x = range(R.shape[2])
+                    y1 = r_mins(R[k, i, :, :])
+                    y2 = r_maxs(R[k, i, :, :])
+                    plt.fill_between(
+                        x,
+                        y1,
+                        y2,
+                        where=y2 >= y1,
+                        facecolor=colors[i],
+                        interpolate=True,
+                        alpha=0.5,
+                        label=tutor_name,
+                    )
+                    plt.plot(r_means(R[k, i, :, :]), color=colors[i])
+                else:
+                    plt.axhline(
+                        y=np.nanmean(R[k, i, :, :]),
+                        color=colors[i],
+                        linestyle=styles[i],
+                        label=tutor_name,
+                    )
+
+            plt.yticks(plt.yticks()[0], [str(int(x)) + r"%" for x in plt.yticks()[0]])
+
+            plt.legend(loc="upper left")
+            plt.savefig(
+                os.path.join(data_dir, "%s-%s.pdf" % (env_name, reward_func)),
+                bbox_inches="tight",
+            )
+            plt.show()
 
 
 if __name__ == "__main__":

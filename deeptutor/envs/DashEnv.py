@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 
 from deeptutor.envs.StudentEnv import StudentEnv
@@ -7,6 +8,8 @@ from deeptutor.infrastructure.utils import (
     sample_item_difficulties,
     sample_student_ability,
     sample_student_decay_exp,
+    sample_window_cw,
+    sample_window_nw,
 )
 
 
