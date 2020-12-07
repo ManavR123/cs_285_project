@@ -39,7 +39,7 @@ def main():
     discount = 0.99
 
     n_reps = 10
-    n_eps = 10
+    n_eps = 100
 
     env_kwargs = {
         "n_items": n_items,

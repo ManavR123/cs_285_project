@@ -3,7 +3,7 @@ import tensorflow as tf
 import torch
 
 from deeptutor.envs.MyGymEnv import MyGymEnv
-from deeptutor.policies.LoggedTRPO import LoggedTRPO
+from deeptutor.policies.LoggedDQN import LoggedDQN
 from deeptutor.tutors.Tutor import Tutor
 from garage import wrap_experiment
 from garage.np.exploration_policies import EpsilonGreedyPolicy
@@ -44,7 +44,7 @@ class RLTutor(Tutor):
                 max_episode_length=env.spec.max_episode_length,
                 worker_class=FragmentWorker,
             )
-            self.algo = LoggedTRPO(
+            self.algo = LoggedDQN(
                 env=env,
                 env_spec=env.spec,
                 policy=policy,

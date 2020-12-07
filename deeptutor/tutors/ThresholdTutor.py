@@ -27,7 +27,7 @@ class ThresholdTutor(Tutor):
         self.env.reset()
 
     def train(self, env, n_eps=10):
-        thresholds = np.arange(0, 1, 0.1)
+        thresholds = np.arange(0, 1, 1/n_eps)
         n_eps_per_thresh = n_eps // thresholds.size
         assert n_eps_per_thresh > 0
         best_reward = None

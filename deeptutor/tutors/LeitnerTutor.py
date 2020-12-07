@@ -69,7 +69,7 @@ class LeitnerTutor(Tutor):
         self.just_reset = True
 
     def train(self, env, n_eps=10):
-        arrival_probs = np.arange(0, 1, 0.1)
+        arrival_probs = np.arange(0, 1, 1/n_eps)
         n_eps_per_aprob = n_eps // arrival_probs.size
         assert n_eps_per_aprob > 0
         best_reward = None
