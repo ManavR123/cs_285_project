@@ -1,4 +1,5 @@
 import copy
+
 import numpy as np
 
 from deeptutor.envs.StudentEnv import StudentEnv
@@ -80,19 +81,19 @@ class DASHEnv(StudentEnv):
         )
 
         self.init_tlasts = np.exp(np.random.normal(0, 0.01, self.n_items))
-        self._init_params()
+        self.init_params()
 
-    def _init_params(self):
+    def init_params(self):
         self.n_correct = np.zeros((self.n_items, self.n_windows))
         self.n_attempts = np.zeros((self.n_items, self.n_windows))
         # self.tlasts = np.ones(self.n_items) * -sys.maxsize
         self.tlasts = copy.deepcopy(self.init_tlasts)
 
-    def _current_window(self):
+    def current_window(self):
         return min(self.n_windows - 1, self.curr_step // self.window_size)
 
-    def _recall_likelihoods(self):
-        curr_window = self._current_window()
+    def recall_likelihoods(self):
+        curr_window = self.current_window()
         study_histories = (
             self.window_cw[:, :curr_window]
             * np.log(1 + self.n_correct[:, :curr_window])
@@ -107,13 +108,13 @@ class DASHEnv(StudentEnv):
         delays = self.now - self.tlasts
         return m / (1 + self.delay_coef * delays) ** f
 
-    def _update_model(self, item, outcome, timestamp, delay):
-        curr_window = self._current_window()
+    def update_model(self, item, outcome, timestamp, delay):
+        curr_window = self.current_window()
         if outcome == 1:
             self.n_correct[item, curr_window] += 1
         self.n_attempts[item, curr_window] += 1
         self.tlasts[item] = timestamp
 
-    def _reset(self):
-        self._init_params()
-        return super(DASHEnv, self)._reset()
+    def reset(self):
+        self.init_params()
+        return super(DASHEnv, self).reset()

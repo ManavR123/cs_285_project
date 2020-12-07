@@ -35,30 +35,30 @@ class StudentEnv(gym.Env):
             np.zeros(4), np.array([n_items - 1, 1, sys.maxsize, sys.maxsize])
         )
 
-    def _recall_likelihoods(self):
+    def recall_likelihoods(self):
         raise NotImplementedError
 
-    def _recall_log_likelihoods(self, eps=1e-9):
-        return np.log(eps + self._recall_likelihoods())
+    def recall_log_likelihoods(self, eps=1e-9):
+        return np.log(eps + self.recall_likelihoods())
 
-    def _update_model(self, item, outcome, timestamp, delay):
+    def update_model(self, item, outcome, timestamp, delay):
         raise NotImplementedError
 
-    def _obs(self):
+    def obs(self):
         timestamp = self.now - self.curr_delay
         return np.array(
             [self.curr_item, self.curr_outcome, timestamp, self.curr_delay], dtype=int
         )
 
-    def _rew(self):
+    def rew(self):
         if self.reward_func == "likelihood":
-            return self._recall_likelihoods().mean()
+            return self.recall_likelihoods().mean()
         elif self.reward_func == "log_likelihood":
-            return self._recall_log_likelihoods().mean()
+            return self.recall_log_likelihoods().mean()
         else:
             raise ValueError
 
-    def _step(self, action):
+    def step(self, action):
         if self.curr_step is None or self.curr_step >= self.n_steps:
             raise ValueError
 
@@ -67,23 +67,23 @@ class StudentEnv(gym.Env):
 
         self.curr_item = action
         self.curr_outcome = (
-            1 if np.random.random() < self._recall_likelihoods()[action] else 0
+            1 if np.random.random() < self.recall_likelihoods()[action] else 0
         )
 
         self.curr_step += 1
         self.curr_delay = self.sample_delay()
         self.now += self.curr_delay
 
-        self._update_model(self.curr_item, self.curr_outcome, self.now, self.curr_delay)
+        self.update_model(self.curr_item, self.curr_outcome, self.now, self.curr_delay)
 
-        obs = self._obs()
-        r = self._rew()
+        obs = self.obs()
+        r = self.rew()
         done = self.curr_step == self.n_steps
         info = {}
 
         return obs, r, done, info
 
-    def _reset(self):
+    def reset(self):
         self.curr_step = 0
         self.now = 0
-        return self._step(np.random.choice(range(self.n_items)))[0]
+        return self.step(np.random.choice(range(self.n_items)))[0]

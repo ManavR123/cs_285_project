@@ -20,23 +20,23 @@ class EFCEnv(StudentEnv):
         self.tlasts = None
         self.strengths = None
         self.init_tlasts = np.exp(np.random.normal(0, 1, self.n_items))
-        self._init_params()
+        self.init_params()
 
-    def _init_params(self):
+    def init_params(self):
         # self.tlasts = np.ones(self.n_items) * -sys.maxsize
         self.tlasts = copy.deepcopy(self.init_tlasts)
         self.strengths = np.ones(self.n_items)
 
-    def _recall_likelihoods(self):
+    def recall_likelihoods(self):
         return np.exp(
             -self.item_decay_rates * (self.now - self.tlasts) / self.strengths
         )
 
-    def _update_model(self, item, outcome, timestamp, delay):
+    def update_model(self, item, outcome, timestamp, delay):
         # self.strengths[item] = max(1, self.strengths[item] + 2 * outcome - 1) # fictional Leitner system
         self.strengths[item] += 1  # num attempts
         self.tlasts[item] = timestamp
 
-    def _reset(self):
-        self._init_params()
-        return super(EFCEnv, self)._reset()
+    def reset(self):
+        self.init_params()
+        return super(EFCEnv, self).reset()

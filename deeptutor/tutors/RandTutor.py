@@ -9,10 +9,10 @@ class RandTutor(Tutor):
     def __init__(self, n_items, init_timestamp=0):
         self.n_items = n_items
 
-    def _next_item(self):
+    def next_item(self):
         return np.random.choice(range(self.n_items))
 
-    def _update(self, item, outcome, timestamp, delay):
+    def update(self, item, outcome, timestamp, delay):
         pass
 
     def reset(self):

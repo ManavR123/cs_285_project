@@ -95,29 +95,45 @@ def make_rl_student_env(env):
             )
         )
 
-    env._obs_orig = env._obs
+    env.obs_orig = env.obs
 
-    def _obs(self):
-        item, outcome, timestamp, delay = env._obs_orig()
+    def obs(self):
+        item, outcome, timestamp, delay = self.obs_orig()
         return self.vectorize_obs(item, outcome, delay)
 
     env.encode_item = types.MethodType(encode_item, env)
     env.encode_delay = types.MethodType(encode_delay, env)
     env.vectorize_obs = types.MethodType(vectorize_obs, env)
-    env._obs = types.MethodType(_obs, env)
+    env.obs = types.MethodType(obs, env)
 
     return env
 
 
 def run_ep(agent, env):
     agent.reset()
-    obs = env._reset()
+    obs = env.reset()
     done = False
     totalr = []
     observations = []
     while not done:
         action = agent.act(obs)
-        obs, r, done, _ = env._step(action)
+        obs, r, done, _ = env.step(action)
+        agent.learn(r)
+        totalr.append(r)
+        observations.append(obs)
+    return np.mean(totalr), observations
+
+
+def run_rl_ep(agent, env):
+    agent.reset()
+    obs, _ = env.reset()
+    done = False
+    totalr = []
+    observations = []
+    while not done:
+        action = agent.act(obs)
+        env_step = env.step(action)
+        obs, done, r = env_step.observation, env._step_cnt, env_step.reward
         agent.learn(r)
         totalr.append(r)
         observations.append(obs)

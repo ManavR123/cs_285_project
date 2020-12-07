@@ -332,7 +332,7 @@ class SuperMnemoTutor(Tutor):
         self._card_id_last = _card_id
         return self.card(_card_id)
 
-    def _next_item(self):
+    def next_item(self):
         if self.curr_item is not None:
             raise ValueError
 
@@ -464,7 +464,7 @@ class SuperMnemoTutor(Tutor):
 
         return new_interval
 
-    def _update(self, item, outcome, timestamp, delay):
+    def update(self, item, outcome, timestamp, delay):
         if self.curr_step > 0 and (self.curr_item is None or item != self.curr_item):
             raise ValueError
 

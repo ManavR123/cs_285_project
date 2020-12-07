@@ -11,9 +11,6 @@ from queue import Queue
 import gym
 import numpy as np
 import tensorflow as tf
-from garage.envs import GymEnv
-from garage.np.baselines import LinearFeatureBaseline
-from garage.tf.algos import TRPO
 from gym import spaces
 from matplotlib import pyplot as plt
 
@@ -26,6 +23,9 @@ from deeptutor.tutors.RandTutor import RandTutor
 from deeptutor.tutors.RLTutor import RLTutor
 from deeptutor.tutors.SuperMnemoTutor import SuperMnemoTutor
 from deeptutor.tutors.ThresholdTutor import ThresholdTutor
+from garage.envs import GymEnv
+from garage.np.baselines import LinearFeatureBaseline
+from garage.tf.algos import TRPO
 
 
 def main():
@@ -39,7 +39,7 @@ def main():
     discount = 0.99
 
     n_reps = 10
-    n_eps = 100
+    n_eps = 10
 
     env_kwargs = {
         "n_items": n_items,
@@ -56,7 +56,7 @@ def main():
         ("Leitner", LeitnerTutor),
         ("SuperMnemo", SuperMnemoTutor),
         ("Threshold", ThresholdTutor),
-        # ("RL", RLTutor),
+        ("RL", RLTutor),
     ]
 
     R = np.zeros((len(envs) * len(reward_funcs), len(tutor_builders), n_eps, n_reps))

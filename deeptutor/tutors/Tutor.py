@@ -5,15 +5,15 @@ class Tutor(object):
     def __init__(self):
         pass
 
-    def _next_item(self):
+    def next_item(self):
         raise NotImplementedError
 
-    def _update(self, item, outcome, timestamp, delay):
+    def update(self, item, outcome, timestamp, delay):
         raise NotImplementedError
 
     def act(self, obs):
-        self._update(*list(obs))
-        return self._next_item()
+        self.update(*list(obs))
+        return self.next_item()
 
     def learn(self, r):
         pass

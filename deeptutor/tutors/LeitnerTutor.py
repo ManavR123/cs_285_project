@@ -18,7 +18,7 @@ class LeitnerTutor(Tutor):
         self.just_reset = False
         self.reset()
 
-    def _next_item(self):
+    def next_item(self):
         if self.curr_item is not None:
             raise ValueError
 
@@ -43,7 +43,7 @@ class LeitnerTutor(Tutor):
         self.curr_item = self.queues[self.curr_q].get(False)
         return self.curr_item
 
-    def _update(self, item, outcome, timestamp, delay):
+    def update(self, item, outcome, timestamp, delay):
         if not self.just_reset and (self.curr_item is None or item != self.curr_item):
             raise ValueError
 
@@ -69,7 +69,7 @@ class LeitnerTutor(Tutor):
         self.just_reset = True
 
     def train(self, env, n_eps=10):
-        arrival_probs = np.arange(0, 1, 0.01)
+        arrival_probs = np.arange(0, 1, 0.1)
         n_eps_per_aprob = n_eps // arrival_probs.size
         assert n_eps_per_aprob > 0
         best_reward = None

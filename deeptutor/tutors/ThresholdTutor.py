@@ -13,21 +13,21 @@ class ThresholdTutor(Tutor):
         self.n_items = n_items
         self.threshold = None
         self.env = copy.deepcopy(env)
-        self.env._reset()
+        self.env.reset()
 
-    def _next_item(self):
-        return np.argmin(np.abs(self.env._recall_likelihoods() - self.threshold))
+    def next_item(self):
+        return np.argmin(np.abs(self.env.recall_likelihoods() - self.threshold))
 
-    def _update(self, item, outcome, timestamp, delay):
-        self.env._update_model(item, outcome, timestamp, delay)
+    def update(self, item, outcome, timestamp, delay):
+        self.env.update_model(item, outcome, timestamp, delay)
         self.env.curr_step += 1
         self.env.now += delay
 
     def reset(self):
-        self.env._reset()
+        self.env.reset()
 
     def train(self, env, n_eps=10):
-        thresholds = np.arange(0, 1, 0.01)
+        thresholds = np.arange(0, 1, 0.1)
         n_eps_per_thresh = n_eps // thresholds.size
         assert n_eps_per_thresh > 0
         best_reward = None

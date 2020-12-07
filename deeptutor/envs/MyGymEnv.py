@@ -1,9 +1,9 @@
 import os
 
 import gym
-from garage.envs import GymEnv
 
 from deeptutor.infrastructure import logger
+from garage.envs import GymEnv
 
 
 class MyGymEnv(GymEnv):
@@ -15,9 +15,9 @@ class MyGymEnv(GymEnv):
         log_dir=None,
         record_log=False,
         force_reset=False,
-        max_episode_length=None
+        max_episode_length=None,
     ):
-        super().__init__(env)
+        super().__init__(env, max_episode_length=max_episode_length)
         self.env = env
         self.env_id = ""
         self.max_episode_length = max_episode_length
