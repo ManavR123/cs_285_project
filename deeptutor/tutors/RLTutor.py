@@ -4,24 +4,29 @@ import torch
 
 from deeptutor.envs.MyGymEnv import MyGymEnv
 from deeptutor.policies.LoggedDQN import LoggedDQN
+from deeptutor.policies.LoggedTRPO import LoggedTRPO
 from deeptutor.tutors.Tutor import Tutor
 from garage import wrap_experiment
+from garage.experiment.deterministic import set_seed
 from garage.np.exploration_policies import EpsilonGreedyPolicy
 from garage.replay_buffer import PathBuffer
 from garage.sampler import FragmentWorker, LocalSampler
-from garage.torch.policies import DiscreteQFArgmaxPolicy
+from garage.torch.policies import DiscreteQFArgmaxPolicy, CategoricalGRUPolicy
+from garage.torch.value_functions import GaussianMLPValueFunction
 from garage.torch.q_functions import DiscreteMLPQFunction
-from garage.trainer import Trainer
-
+from garage.trainer import Trainer, TFTrainer
+from garage.tf.policies import CategoricalMLPPolicy
+from garage.np.baselines import LinearFeatureBaseline
 
 class RLTutor(Tutor):
     def __init__(self, n_items, init_timestamp=0):
         self.algo = None
         self.curr_obs = None
 
-    def train(self, gym_env, n_eps=10):
-        @wrap_experiment(archive_launch_repo=False)
-        def train_helper(ctxt=None):
+    def train(self, gym_env, algo="DQN", n_eps=10, seed=0):
+        @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
+        def train_dqn(ctxt=None):
+            set_seed(seed)
             trainer = Trainer(ctxt)
             env = MyGymEnv(gym_env, max_episode_length=100)
             steps_per_epoch = 10
@@ -54,7 +59,7 @@ class RLTutor(Tutor):
                 sampler=sampler,
                 steps_per_epoch=steps_per_epoch,
                 qf_lr=5e-5,
-                discount=0.9,
+                discount=0.99,
                 min_buffer_size=int(1e4),
                 n_train_steps=500,
                 target_update_freq=30,
@@ -65,7 +70,39 @@ class RLTutor(Tutor):
 
             return self.algo.rew_chkpts
 
-        return train_helper()
+        @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
+        def train_mlp_trpo(ctxt=None):
+            set_seed(seed)
+            with TFTrainer(snapshot_config=ctxt) as trainer:
+                env = MyGymEnv(gym_env, max_episode_length=100)
+                policy = CategoricalMLPPolicy(name='policy',
+                                      env_spec=env.spec,
+                                      )
+                baseline = LinearFeatureBaseline(env_spec=env.spec)
+                sampler = LocalSampler(
+                    agents=policy,
+                    envs=env,
+                    max_episode_length=env.spec.max_episode_length,
+                    worker_class=FragmentWorker,
+                )
+                self.algo = LoggedTRPO(
+                    env=env,
+                    env_spec=env.spec,
+                    policy=policy,
+                    baseline=baseline,
+                    sampler=sampler,
+                    discount=0.99,
+                    max_kl_step=0.01,
+                )
+
+                trainer.setup(self.algo, env)
+                trainer.train(n_epochs=n_eps, batch_size=4000)
+
+        if algo == "DQN":
+            return train_dqn()
+        if algo == "MLP_TRPO":
+            return train_mlp_trpo()
+        raise ValueError(f"{algo} is not suppported")
 
     def reset(self):
         self.curr_obs = None
