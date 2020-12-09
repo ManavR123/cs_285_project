@@ -10,7 +10,8 @@ from deeptutor.envs.HRLEnv import *
 from deeptutor.infrastructure.utils import *
 from deeptutor.tutors.LeitnerTutor import LeitnerTutor
 from deeptutor.tutors.RandTutor import RandTutor
-from deeptutor.tutors.RLTutor import RLTutor
+from deeptutor.tutors.TRPOTutor import TRPOTutor
+from deeptutor.tutors.SACTutor import SACTutor
 from deeptutor.tutors.SuperMnemoTutor import SuperMnemoTutor
 from deeptutor.tutors.ThresholdTutor import ThresholdTutor
 
@@ -45,7 +46,10 @@ def main():
         # ("Leitner", LeitnerTutor),
         # ("SuperMnemo", SuperMnemoTutor),
         # ("Threshold", ThresholdTutor),
-        ("RL", RLTutor),
+        # ("RL", RLTutor),
+        ("TRPO", TRPOTutor),
+        # ("SAC", SACTutor)
+
     ]
 
     reward_logs = {
