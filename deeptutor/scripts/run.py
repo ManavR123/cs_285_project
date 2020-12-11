@@ -10,8 +10,9 @@ from deeptutor.envs.HRLEnv import *
 from deeptutor.infrastructure.utils import *
 from deeptutor.tutors.LeitnerTutor import LeitnerTutor
 from deeptutor.tutors.RandTutor import RandTutor
-from deeptutor.tutors.TRPOTutor import TRPOTutor
+from deeptutor.tutors.PPOTutor import PPOTutor
 from deeptutor.tutors.SACTutor import SACTutor
+from deeptutor.tutors.DQNTutor import DQNTutor
 from deeptutor.tutors.SuperMnemoTutor import SuperMnemoTutor
 from deeptutor.tutors.ThresholdTutor import ThresholdTutor
 
@@ -47,9 +48,9 @@ def main():
         # ("SuperMnemo", SuperMnemoTutor),
         # ("Threshold", ThresholdTutor),
         # ("RL", RLTutor),
-        ("TRPO", TRPOTutor),
+        ("PPO", PPOTutor),
+        # ("DQN", DQNTutor),
         # ("SAC", SACTutor)
-
     ]
 
     reward_logs = {
@@ -86,9 +87,9 @@ def main():
                             agent = build_tutor(n_items)
                         R[:, j] = agent.train(env, n_eps=n_eps)
                 rewards[env_name] = R
-        reward_logs["rewards"] = rewards
-        with open(os.path.join(data_dir, f"{tutor_name}_reward_logs.pkl"), "wb") as f:
-            pickle.dump(reward_logs, f, pickle.HIGHEST_PROTOCOL)
+                reward_logs["rewards"] = rewards
+                with open(os.path.join(data_dir, f"{tutor_name}_reward_logs.pkl"), "wb") as f:
+                    pickle.dump(reward_logs, f, pickle.HIGHEST_PROTOCOL)
 
 
 if __name__ == "__main__":

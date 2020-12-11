@@ -2,7 +2,7 @@ import tensorflow as tf
 import torch
 
 from deeptutor.envs.MyGymEnv import MyGymEnv
-from deeptutor.policies.LoggedTRPO import LoggedTRPO
+from deeptutor.policies.LoggedPPO import LoggedPPO
 from deeptutor.tutors.RLTutor import RLTutor
 from garage import wrap_experiment
 from garage.experiment.deterministic import set_seed
@@ -14,6 +14,7 @@ from garage.torch.q_functions import DiscreteMLPQFunction
 from garage.torch.value_functions import GaussianMLPValueFunction
 from garage.trainer import Trainer, TFTrainer
 from garage.torch import prefer_gpu, global_device
+from garage.tf.optimizers import FirstOrderOptimizer
 
 
 class TRPOTutor(RLTutor):
@@ -26,7 +27,7 @@ class TRPOTutor(RLTutor):
             set_seed(seed)
             with TFTrainer(ctxt) as trainer:
                 env = MyGymEnv(gym_env, max_episode_length=100)
-                policy = CategoricalGRUPolicy(name='policy', env_spec=env.spec)
+                policy = CategoricalGRUPolicy(name='policy', env_spec=env.spec, state_include_action=False)
                 baseline = LinearFeatureBaseline(env_spec=env.spec)
                 sampler = LocalSampler(
                     agents=policy,
@@ -35,14 +36,14 @@ class TRPOTutor(RLTutor):
                     worker_class=FragmentWorker,
                     is_tf_worker=True,
                 )
-                self.algo = LoggedTRPO(
+                self.algo = LoggedPPO(
                     env=env,
                     env_spec=env.spec,
                     policy=policy,
                     baseline=baseline,
                     sampler=sampler,
                     discount=0.99,
-                    center_adv=False
+                    center_adv=False,
                 )
 
                 trainer.setup(self.algo, env)

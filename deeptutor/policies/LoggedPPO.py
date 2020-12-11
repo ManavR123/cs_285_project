@@ -1,11 +1,11 @@
 from deeptutor.infrastructure.utils import run_rl_ep
 from deeptutor.tutors.DummyTutor import DummyTutor
-from garage.tf.algos import TRPO
+from garage.tf.algos import PPO
 
 
-class LoggedTRPO(TRPO):
+class LoggedPPO(PPO):
     def __init__(self, env, *args, **kwargs):
-        super(LoggedTRPO, self).__init__(*args, **kwargs)
+        super(LoggedPPO, self).__init__(*args, **kwargs)
         self.env = env
         self.rew_chkpts = []
 
