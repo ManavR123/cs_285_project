@@ -13,7 +13,7 @@ from deeptutor.tutors.RandTutor import RandTutor
 from deeptutor.tutors.PPOTutor import PPOTutor
 from deeptutor.tutors.SACTutor import SACTutor
 from deeptutor.tutors.DQNTutor import DQNTutor
-from deeptutor.tutors.MLPRPO import MLPRPO
+from deeptutor.tutors.MLPTRPOTutor import MLPTRPOTutor
 from deeptutor.tutors.SuperMnemoTutor import SuperMnemoTutor
 from deeptutor.tutors.ThresholdTutor import ThresholdTutor
 

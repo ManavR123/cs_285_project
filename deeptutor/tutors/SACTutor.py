@@ -13,7 +13,7 @@ from garage.torch.algos import SAC
 from garage.torch.q_functions import DiscreteMLPQFunction
 from garage.trainer import Trainer
 from garage.torch import prefer_gpu, global_device
-from garage.torch.policies import CategoricalGRUPolicy
+# from garage.torch.policies import CategoricalGRUPolicy
 
 class SACTutor(RLTutor):
     def __init__(self, n_items, init_timestamp=0):
