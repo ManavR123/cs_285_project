@@ -17,13 +17,13 @@ from garage.torch import prefer_gpu, global_device
 from garage.tf.optimizers import FirstOrderOptimizer
 
 
-class TRPOTutor(RLTutor):
+class PPOTutor(RLTutor):
     def __init__(self, n_items, init_timestamp=0):
         super().__init__(n_items)
     
     def train(self, gym_env, n_eps=10, seed=0):
         @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
-        def train_trpo(ctxt=None):
+        def train_ppo(ctxt=None):
             set_seed(seed)
             with TFTrainer(ctxt) as trainer:
                 env = MyGymEnv(gym_env, max_episode_length=100)
@@ -50,4 +50,4 @@ class TRPOTutor(RLTutor):
                 trainer.train(n_epochs=n_eps, batch_size=4000)
                 return self.algo.rew_chkpts
 
-        return train_trpo()
+        return train_ppo()
