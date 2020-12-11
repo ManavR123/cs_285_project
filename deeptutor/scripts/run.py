@@ -14,6 +14,7 @@ from deeptutor.tutors.PPOTutor import PPOTutor
 from deeptutor.tutors.SACTutor import SACTutor
 from deeptutor.tutors.DQNTutor import DQNTutor
 from deeptutor.tutors.MLPTRPOTutor import MLPTRPOTutor
+from deeptutor.tutors.GRUTRPOTutor import GRUTRPOTutor
 from deeptutor.tutors.SuperMnemoTutor import SuperMnemoTutor
 from deeptutor.tutors.ThresholdTutor import ThresholdTutor
 
@@ -49,7 +50,8 @@ def main():
         # ("SuperMnemo", SuperMnemoTutor),
         # ("Threshold", ThresholdTutor),
         # ("MLPTRPO", MLPTRPOTutor),
-        ("PPO", PPOTutor),
+        ("GRUTRPO", GRUTRPOTutor),
+        # ("PPO", PPOTutor),
         # ("DQN", DQNTutor),
         # ("SAC", SACTutor)
     ]
