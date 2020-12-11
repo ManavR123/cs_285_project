@@ -13,7 +13,7 @@ from garage.trainer import Trainer
 
 class DQNTutor(RLTutor):
     def __init__(self, n_items, init_timestamp=0):
-        super().__init__()
+        super().__init__(n_items)
     
     def train(self, gym_env, n_eps=10, seed=0):
         @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
