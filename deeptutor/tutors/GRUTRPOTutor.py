@@ -20,7 +20,7 @@ class GRUTRPOTutor(RLTutor):
     def train(self, gym_env, n_eps=10, seed=0):
         tf.compat.v1.reset_default_graph()
         @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
-        def train_trpo(ctxt=None):
+        def train_gru_trpo(ctxt=None):
             set_seed(seed)
             with TFTrainer(snapshot_config=ctxt) as trainer:
                 env = MyGymEnv(gym_env, max_episode_length=100)
@@ -51,4 +51,4 @@ class GRUTRPOTutor(RLTutor):
                 trainer.train(n_epochs=n_eps, batch_size=4000)
                 return self.algo.rew_chkpts
 
-        return train_trpo()
+        return train_gru_trpo()
