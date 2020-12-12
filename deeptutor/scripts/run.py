@@ -24,7 +24,7 @@ def load_rewards(tutor_name, data_dir):
     if not os.path.exists(filename):
         return {}
     with open(filename, "rb") as f:
-        return pickle.load(f)
+        return pickle.load(f)["rewards"]
 
 
 def main():
@@ -50,8 +50,8 @@ def main():
         # ("SuperMnemo", SuperMnemoTutor),
         # ("Threshold", ThresholdTutor),
         # ("MLPTRPO", MLPTRPOTutor),
-        ("GRUTRPO", GRUTRPOTutor),
-        # ("PPO", PPOTutor),
+        # ("GRUTRPO", GRUTRPOTutor),
+        ("PPO", PPOTutor),
         # ("DQN", DQNTutor),
         # ("SAC", SACTutor)
     ]
@@ -74,6 +74,9 @@ def main():
                 env_name = (
                     base_env_name + "-" + ("L" if reward_func == "likelihood" else "LL")
                 )
+                if env_name in rewards.get('rewards', {}).keys():
+                    print("Skipping\n")
+                    continue
                 R = np.zeros((n_eps, n_reps))
                 print(f"Environment: {env_name}")
                 for j in tqdm(range(n_reps)):

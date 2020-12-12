@@ -22,6 +22,7 @@ class PPOTutor(RLTutor):
         super().__init__(n_items)
     
     def train(self, gym_env, n_eps=10, seed=0):
+        tf.compat.v1.reset_default_graph()
         @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
         def train_ppo(ctxt=None):
             set_seed(seed)
@@ -44,6 +45,7 @@ class PPOTutor(RLTutor):
                     sampler=sampler,
                     discount=0.99,
                     center_adv=False,
+                    optimizer_args=dict(max_optimization_epochs=8)
                 )
 
                 trainer.setup(self.algo, env)
