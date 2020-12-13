@@ -41,8 +41,15 @@ def main():
         "discount": discount,
         "sample_delay": sample_const_delay(const_delay),
     }
-    reward_funcs = ["likelihood", "log_likelihood"]
-    envs = [("EFC", EFCEnv), ("HLR", HLREnv), ("DASH", DASHEnv)]
+    reward_funcs = [
+        "likelihood",
+        "log_likelihood"
+    ]
+    envs = [
+        ("EFC", EFCEnv),
+        ("HLR", HLREnv),
+        ("DASH", DASHEnv)
+    ]
 
     tutor_builders = [
         # ("Random", RandTutor),
@@ -51,10 +58,11 @@ def main():
         # ("Threshold", ThresholdTutor),
         # ("MLPTRPO", MLPTRPOTutor),
         # ("GRUTRPO", GRUTRPOTutor),
-        ("PPO", PPOTutor),
+        # ("PPO", PPOTutor),
         # ("DQN", DQNTutor),
-        # ("SAC", SACTutor)
     ]
+
+    rl_tutors = [MLPTRPOTutor, GRUTRPOTutor, PPOTutor, DQNTutor]
 
     reward_logs = {
         "n_steps": n_steps,
@@ -74,15 +82,15 @@ def main():
                 env_name = (
                     base_env_name + "-" + ("L" if reward_func == "likelihood" else "LL")
                 )
-                if env_name in rewards.get('rewards', {}).keys():
+                print(f"Environment: {env_name}")
+                if env_name in rewards.keys():
                     print("Skipping\n")
                     continue
                 R = np.zeros((n_eps, n_reps))
-                print(f"Environment: {env_name}")
                 for j in tqdm(range(n_reps)):
                     np.random.seed(j)
                     env = base_env(**env_kwargs, reward_func=reward_func)
-                    if tutor_name.startswith("RL"):
+                    if build_tutor in rl_tutors:
                         rl_env = make_rl_student_env(env)
                         agent = build_tutor(n_items)
                         R[:, j] = agent.train(rl_env, n_eps=n_eps, seed=j)
