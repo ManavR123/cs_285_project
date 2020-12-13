@@ -10,10 +10,12 @@ class LoggedDQN(DQN):
         self.rew_chkpts = []
 
     def train(self, trainer):
+        ret = None
         for _ in trainer.step_epochs():
             trainer.step_path = trainer.obtain_episodes(trainer.step_itr)
-            self._train_once(trainer.step_itr, trainer.step_path)
+            ret = self._train_once(trainer.step_itr, trainer.step_path)
             my_policy = lambda obs: self.policy.get_action(obs)[0]
             r, _ = run_rl_ep(DummyTutor(my_policy), self.env)
             self.rew_chkpts.append(r)
             trainer.step_itr += 1
+        return ret
