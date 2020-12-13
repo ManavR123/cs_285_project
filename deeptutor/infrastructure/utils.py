@@ -133,7 +133,7 @@ def run_rl_ep(agent, env):
     while not done:
         action = agent.act(obs)
         env_step = env.step(action)
-        obs, done, r = env_step.observation, env._step_cnt == None, env_step.reward
+        obs, done, r = env_step.observation, env_step.last, env_step.reward
         agent.learn(r)
         totalr.append(r)
         observations.append(obs)
