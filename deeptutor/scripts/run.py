@@ -28,6 +28,7 @@ def load_rewards(tutor_name, data_dir):
 
 
 def main():
+    override = True # override existing data
     data_dir = os.path.join(os.getcwd(), "data")
     n_steps = 200
     n_items = 30
@@ -59,7 +60,7 @@ def main():
         # ("MLPTRPO", MLPTRPOTutor),
         # ("GRUTRPO", GRUTRPOTutor),
         # ("PPO", PPOTutor),
-        # ("DQN", DQNTutor),
+        ("DQN", DQNTutor),
     ]
 
     rl_tutors = [MLPTRPOTutor, GRUTRPOTutor, PPOTutor, DQNTutor]
@@ -83,7 +84,7 @@ def main():
                     base_env_name + "-" + ("L" if reward_func == "likelihood" else "LL")
                 )
                 print(f"Environment: {env_name}")
-                if env_name in rewards.keys():
+                if env_name in rewards.keys() and not override:
                     print("Skipping\n")
                     continue
                 R = np.zeros((n_eps, n_reps))
