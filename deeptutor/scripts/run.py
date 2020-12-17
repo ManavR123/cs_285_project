@@ -8,12 +8,12 @@ from deeptutor.envs.DashEnv import *
 from deeptutor.envs.EFCEnv import EFCEnv
 from deeptutor.envs.HRLEnv import *
 from deeptutor.infrastructure.utils import *
-from deeptutor.tutors.LeitnerTutor import LeitnerTutor
-from deeptutor.tutors.RandTutor import RandTutor
-from deeptutor.tutors.PPOTutor import PPOTutor
 from deeptutor.tutors.DQNTutor import DQNTutor
-from deeptutor.tutors.MLPTRPOTutor import MLPTRPOTutor
 from deeptutor.tutors.GRUTRPOTutor import GRUTRPOTutor
+from deeptutor.tutors.LeitnerTutor import LeitnerTutor
+from deeptutor.tutors.MLPTRPOTutor import MLPTRPOTutor
+from deeptutor.tutors.PPOTutor import PPOTutor
+from deeptutor.tutors.RandTutor import RandTutor
 from deeptutor.tutors.SuperMnemoTutor import SuperMnemoTutor
 from deeptutor.tutors.ThresholdTutor import ThresholdTutor
 
@@ -42,11 +42,7 @@ def main():
         "sample_delay": sample_const_delay(const_delay),
     }
     reward_funcs = ["likelihood", "log_likelihood"]
-    envs = [
-        ("EFC", EFCEnv),/
-        ("HLR", HLREnv),
-        ("DASH", DASHEnv)
-    ]
+    envs = [("EFC", EFCEnv), ("HLR", HLREnv), ("DASH", DASHEnv)]
 
     tutor_builders = [
         # ("Random", RandTutor),

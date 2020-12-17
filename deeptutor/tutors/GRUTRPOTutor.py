@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-
 from deeptutor.envs.MyGymEnv import MyGymEnv
 from deeptutor.policies.LoggedTRPO import LoggedTRPO
 from deeptutor.tutors.RLTutor import RLTutor
@@ -8,9 +7,9 @@ from garage import wrap_experiment
 from garage.experiment.deterministic import set_seed
 from garage.np.baselines import LinearFeatureBaseline
 from garage.sampler import FragmentWorker, LocalSampler
+from garage.tf.optimizers import FiniteDifferenceHVP
 from garage.tf.policies import CategoricalGRUPolicy
 from garage.trainer import TFTrainer
-from garage.tf.optimizers import FiniteDifferenceHVP
 
 
 class GRUTRPOTutor(RLTutor):

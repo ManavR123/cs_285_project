@@ -1,10 +1,10 @@
 import os
 
+import akro
 import gym
 
-from garage.envs import GymEnv
-import akro
 from garage import Environment, EnvSpec, EnvStep, StepType
+from garage.envs import GymEnv
 
 
 class MyGymEnv(GymEnv):
@@ -35,10 +35,12 @@ class MyGymEnv(GymEnv):
     def step(self, action):
         env_step = super().step(action)
         self._action_space = akro.from_gym(self._env.action_space)
-        self._observation_space = akro.from_gym(self._env.observation_space,
-                                                is_image=self.is_image)
-        self._spec = EnvSpec(action_space=self.action_space,
-                             observation_space=self.observation_space,
-                             max_episode_length=self._max_episode_length)
+        self._observation_space = akro.from_gym(
+            self._env.observation_space, is_image=self.is_image
+        )
+        self._spec = EnvSpec(
+            action_space=self.action_space,
+            observation_space=self.observation_space,
+            max_episode_length=self._max_episode_length,
+        )
         return env_step
-

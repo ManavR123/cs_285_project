@@ -2,14 +2,13 @@ import torch
 
 from deeptutor.envs.MyGymEnv import MyGymEnv
 from deeptutor.policies.DynamicPolicy import DynamicPolicy
-from deeptutor.tutors.RLTutor import RLTutor
 from deeptutor.policies.LoggedPPOTorch import LoggedPPO
-
+from deeptutor.tutors.RLTutor import RLTutor
+from garage import wrap_experiment
 from garage.experiment.deterministic import set_seed
+from garage.sampler import FragmentWorker, LocalSampler
 from garage.torch.value_functions import GaussianMLPValueFunction
 from garage.trainer import Trainer
-from garage import wrap_experiment
-from garage.sampler import FragmentWorker, LocalSampler
 
 
 class DynamicTutor(RLTutor):
@@ -37,10 +36,10 @@ class DynamicTutor(RLTutor):
                 value_function=value_function,
                 sampler=sampler,
                 discount=0.99,
-                center_adv=False
+                center_adv=False,
             )
             trainer.setup(self.algo, env)
-            trainer.train(n_epochs=n_eps, batch_size=1)
+            trainer.train(n_epochs=n_eps, batch_size=4000)
 
             return self.algo.rew_chkpts
 

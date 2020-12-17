@@ -4,13 +4,12 @@ import pickle
 import numpy as np
 from tqdm import tqdm
 
-
 from deeptutor.envs.DashEnv import *
 from deeptutor.envs.EFCEnv import EFCEnv
 from deeptutor.envs.HRLEnv import *
 from deeptutor.infrastructure.utils import *
-from deeptutor.tutors.RandTutor import RandTutor
 from deeptutor.tutors.DynamicTutor import DynamicTutor
+from deeptutor.tutors.RandTutor import RandTutor
 
 
 def load_rewards(tutor_name, data_dir):

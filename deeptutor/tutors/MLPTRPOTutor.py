@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-
 from deeptutor.envs.MyGymEnv import MyGymEnv
 from deeptutor.policies.LoggedTRPO import LoggedTRPO
 from deeptutor.tutors.RLTutor import RLTutor

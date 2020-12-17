@@ -8,14 +8,14 @@ from garage import wrap_experiment
 from garage.experiment.deterministic import set_seed
 from garage.np.baselines import LinearFeatureBaseline
 from garage.sampler import FragmentWorker, LocalSampler
+from garage.tf.optimizers import FirstOrderOptimizer
 from garage.tf.policies import CategoricalGRUPolicy
+from garage.torch import global_device, prefer_gpu
 
 # from garage.torch.policies import CategoricalGRUPolicy
 from garage.torch.q_functions import DiscreteMLPQFunction
 from garage.torch.value_functions import GaussianMLPValueFunction
-from garage.trainer import Trainer, TFTrainer
-from garage.torch import prefer_gpu, global_device
-from garage.tf.optimizers import FirstOrderOptimizer
+from garage.trainer import TFTrainer, Trainer
 
 
 class PPOTutor(RLTutor):
