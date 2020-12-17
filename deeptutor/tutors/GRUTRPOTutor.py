@@ -16,18 +16,18 @@ from garage.tf.optimizers import FiniteDifferenceHVP
 class GRUTRPOTutor(RLTutor):
     def __init__(self, n_items, init_timestamp=0):
         super().__init__(n_items)
-    
+
     def train(self, gym_env, n_eps=10, seed=0):
         tf.compat.v1.reset_default_graph()
+
         @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
         def train_gru_trpo(ctxt=None):
             set_seed(seed)
             with TFTrainer(snapshot_config=ctxt) as trainer:
                 env = MyGymEnv(gym_env, max_episode_length=100)
-                policy = CategoricalGRUPolicy(name='policy',
-                                      env_spec=env.spec,
-                                      state_include_action=False
-                                      )
+                policy = CategoricalGRUPolicy(
+                    name="policy", env_spec=env.spec, state_include_action=False
+                )
                 baseline = LinearFeatureBaseline(env_spec=env.spec)
                 sampler = LocalSampler(
                     agents=policy,
@@ -43,8 +43,9 @@ class GRUTRPOTutor(RLTutor):
                     sampler=sampler,
                     discount=0.99,
                     max_kl_step=0.01,
-                    optimizer_args=dict(hvp_approach=FiniteDifferenceHVP(
-                        base_eps=1e-5))
+                    optimizer_args=dict(
+                        hvp_approach=FiniteDifferenceHVP(base_eps=1e-5)
+                    ),
                 )
 
                 trainer.setup(self.algo, env)

@@ -112,6 +112,8 @@ def make_rl_student_env(env):
 def run_ep(agent, env):
     agent.reset()
     obs = env.reset()
+    if agent.dynamic:
+        agent.update_items(env.action_space.n)
     done = False
     totalr = []
     observations = []
@@ -119,6 +121,8 @@ def run_ep(agent, env):
         action = agent.act(obs)
         obs, r, done, _ = env.step(action)
         agent.learn(r)
+        if agent.dynamic:
+            agent.update_items(env.action_space.n)
         totalr.append(r)
         observations.append(obs)
     return np.mean(totalr), observations

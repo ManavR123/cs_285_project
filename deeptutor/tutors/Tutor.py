@@ -2,8 +2,9 @@ from deeptutor.infrastructure.utils import *
 
 
 class Tutor(object):
-    def __init__(self):
-        pass
+    def __init__(self, dynamic=False, n_items=10):
+        self.dynamic = dynamic
+        self.n_items = n_items
 
     def next_item(self):
         raise NotImplementedError
@@ -23,3 +24,6 @@ class Tutor(object):
 
     def reset(self):
         raise NotImplementedError
+
+    def update_items(self, num_items):
+        self.n_items = num_items

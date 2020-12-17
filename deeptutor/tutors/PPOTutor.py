@@ -9,6 +9,7 @@ from garage.experiment.deterministic import set_seed
 from garage.np.baselines import LinearFeatureBaseline
 from garage.sampler import FragmentWorker, LocalSampler
 from garage.tf.policies import CategoricalGRUPolicy
+
 # from garage.torch.policies import CategoricalGRUPolicy
 from garage.torch.q_functions import DiscreteMLPQFunction
 from garage.torch.value_functions import GaussianMLPValueFunction
@@ -20,15 +21,18 @@ from garage.tf.optimizers import FirstOrderOptimizer
 class PPOTutor(RLTutor):
     def __init__(self, n_items, init_timestamp=0):
         super().__init__(n_items)
-    
+
     def train(self, gym_env, n_eps=10, seed=0):
         tf.compat.v1.reset_default_graph()
+
         @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
         def train_ppo(ctxt=None):
             set_seed(seed)
             with TFTrainer(ctxt) as trainer:
                 env = MyGymEnv(gym_env, max_episode_length=100)
-                policy = CategoricalGRUPolicy(name='policy', env_spec=env.spec, state_include_action=False)
+                policy = CategoricalGRUPolicy(
+                    name="policy", env_spec=env.spec, state_include_action=False
+                )
                 baseline = LinearFeatureBaseline(env_spec=env.spec)
                 sampler = LocalSampler(
                     agents=policy,
@@ -45,7 +49,7 @@ class PPOTutor(RLTutor):
                     sampler=sampler,
                     discount=0.99,
                     center_adv=False,
-                    optimizer_args=dict(max_optimization_epochs=8)
+                    optimizer_args=dict(max_optimization_epochs=8),
                 )
 
                 trainer.setup(self.algo, env)

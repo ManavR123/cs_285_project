@@ -4,22 +4,17 @@ import pickle
 import numpy as np
 from tqdm import tqdm
 
+
 from deeptutor.envs.DashEnv import *
 from deeptutor.envs.EFCEnv import EFCEnv
 from deeptutor.envs.HRLEnv import *
 from deeptutor.infrastructure.utils import *
-from deeptutor.tutors.LeitnerTutor import LeitnerTutor
 from deeptutor.tutors.RandTutor import RandTutor
-from deeptutor.tutors.PPOTutor import PPOTutor
-from deeptutor.tutors.DQNTutor import DQNTutor
-from deeptutor.tutors.MLPTRPOTutor import MLPTRPOTutor
-from deeptutor.tutors.GRUTRPOTutor import GRUTRPOTutor
-from deeptutor.tutors.SuperMnemoTutor import SuperMnemoTutor
-from deeptutor.tutors.ThresholdTutor import ThresholdTutor
+from deeptutor.tutors.DynamicTutor import DynamicTutor
 
 
 def load_rewards(tutor_name, data_dir):
-    filename = os.path.join(data_dir, f"{tutor_name}_reward_logs.pkl")
+    filename = os.path.join(data_dir, f"dynamic_{tutor_name}_reward_logs.pkl")
     if not os.path.exists(filename):
         return {}
     with open(filename, "rb") as f:
@@ -27,7 +22,7 @@ def load_rewards(tutor_name, data_dir):
 
 
 def main():
-    override = True  # override existing data
+    override = False  # override existing data
     data_dir = os.path.join(os.getcwd(), "data")
     n_steps = 200
     n_items = 30
@@ -40,27 +35,17 @@ def main():
         "n_steps": n_steps,
         "discount": discount,
         "sample_delay": sample_const_delay(const_delay),
+        "dynamic": True,
+        "add_rate": 10,
     }
     reward_funcs = ["likelihood", "log_likelihood"]
     envs = [
-        ("EFC", EFCEnv),/
-        ("HLR", HLREnv),
-        ("DASH", DASHEnv)
+        ("EFC", EFCEnv),
     ]
-
     tutor_builders = [
         # ("Random", RandTutor),
-        # ("Leitner", LeitnerTutor),
-        # ("SuperMnemo", SuperMnemoTutor),
-        # ("Threshold", ThresholdTutor),
-        # ("MLPTRPO", MLPTRPOTutor),
-        # ("GRUTRPO", GRUTRPOTutor),
-        # ("PPO", PPOTutor),
-        ("DQN", DQNTutor),
+        ("Dynamic", DynamicTutor),
     ]
-
-    rl_tutors = [MLPTRPOTutor, GRUTRPOTutor, PPOTutor, DQNTutor]
-
     reward_logs = {
         "n_steps": n_steps,
         "n_items": n_items,
@@ -87,20 +72,13 @@ def main():
                 for j in tqdm(range(n_reps)):
                     np.random.seed(j)
                     env = base_env(**env_kwargs, reward_func=reward_func)
-                    if build_tutor in rl_tutors:
-                        rl_env = make_rl_student_env(env)
-                        agent = build_tutor(n_items)
-                        R[:, j] = agent.train(rl_env, n_eps=n_eps, seed=j)
-                    else:
-                        if "Thresh" in tutor_name:
-                            agent = build_tutor(n_items, env=env)
-                        else:
-                            agent = build_tutor(n_items)
-                        R[:, j] = agent.train(env, n_eps=n_eps)
+                    agent = build_tutor(n_items=n_items, dynamic=True)
+                    R[:, j] = agent.train(env, n_eps=n_eps)
                 rewards[env_name] = R
                 reward_logs["rewards"] = rewards
                 with open(
-                    os.path.join(data_dir, f"{tutor_name}_reward_logs.pkl"), "wb"
+                    os.path.join(data_dir, f"dynamic_{tutor_name}_reward_logs.pkl"),
+                    "wb",
                 ) as f:
                     pickle.dump(reward_logs, f, pickle.HIGHEST_PROTOCOL)
 

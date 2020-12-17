@@ -15,17 +15,19 @@ from garage.trainer import TFTrainer
 class MLPTRPOTutor(RLTutor):
     def __init__(self, n_items, init_timestamp=0):
         super().__init__(n_items)
-    
+
     def train(self, gym_env, n_eps=10, seed=0):
         tf.compat.v1.reset_default_graph()
+
         @wrap_experiment(archive_launch_repo=False, snapshot_mode="none")
         def train_trpo(ctxt=None):
             set_seed(seed)
             with TFTrainer(snapshot_config=ctxt) as trainer:
                 env = MyGymEnv(gym_env, max_episode_length=100)
-                policy = CategoricalMLPPolicy(name='policy',
-                                      env_spec=env.spec,
-                                      )
+                policy = CategoricalMLPPolicy(
+                    name="policy",
+                    env_spec=env.spec,
+                )
                 baseline = LinearFeatureBaseline(env_spec=env.spec)
                 sampler = LocalSampler(
                     agents=policy,

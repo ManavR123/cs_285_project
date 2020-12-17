@@ -116,5 +116,6 @@ class DASHEnv(StudentEnv):
         self.tlasts[item] = timestamp
 
     def reset(self):
+        self.n_items = self.orig_n_items
         self.init_params()
         return super(DASHEnv, self).reset()

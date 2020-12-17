@@ -2,7 +2,8 @@ from deeptutor.tutors.Tutor import Tutor
 
 
 class RLTutor(Tutor):
-    def __init__(self, n_items, init_timestamp=0):
+    def __init__(self, init_timestamp=0, **kwargs):
+        super(RLTutor, self).__init__(**kwargs)
         self.algo = None
         self.curr_obs = None
 
